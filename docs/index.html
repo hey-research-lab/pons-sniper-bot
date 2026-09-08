@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pons Sniper Bot for Robinhood Chain | pons.family v2</title>
+    <meta
+      name="description"
+      content="Open-source Pons sniper bot for Robinhood Chain. Detect pons.family v2 TokenLaunched events, filter launches, quote the bonding curve, and buy with dry-run, slippage, and risk limits."
+    />
+    <meta
+      name="keywords"
+      content="pons sniper bot, pons sniper, robinhood chain sniper, pons.family, pons v2, bonding curve, token launched, launchpad sniper, pons bundler"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="author" content="Pons Sniper Bot" />
+    <meta name="theme-color" content="#0c100d" />
+    <link rel="canonical" href="https://wooyang.github.io/pons-bundler/" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pons Sniper Bot" />
+    <meta property="og:url" content="https://wooyang.github.io/pons-bundler/" />
+    <meta property="og:title" content="Pons Sniper Bot for Robinhood Chain" />
+    <meta
+      property="og:description"
+      content="Detect Pons v2 launches on Robinhood Chain and execute user-configured curve buys. Dry-run by default."
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://wooyang.github.io/pons-bundler/favicon.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Pons Sniper Bot for Robinhood Chain" />
+    <meta
+      name="twitter:description"
+      content="Open-source TypeScript sniper for pons.family v2 bonding-curve launches on Robinhood Chain (chain ID 4663)."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Pons Sniper Bot",
+        "alternateName": ["Pons sniper", "Pons bundler"],
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "url": "https://wooyang.github.io/pons-bundler/",
+        "codeRepository": "https://github.com/wooyang/pons-bundler",
+        "description": "TypeScript CLI that snipes pons.family v2 launches on Robinhood Chain and includes the original launch bundler.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "TokenLaunched event detection on the Pons v2 factory",
+          "Configurable launch filters and risk limits",
+          "Official Pons curve quotes with currentSnipeTaxBps",
+          "Dry-run simulation before any broadcast",
+          "Pons v2 launchAndBuy bundler for wallets you control"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a Pons sniper bot?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A Pons sniper bot watches the pons.family v2 factory on Robinhood Chain for TokenLaunched events, applies your filters, quotes the bonding curve with official math, and can buy with minTokensOut protection. It is Pons-specific, not a generic DEX sniper."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this Pons sniper work on Robinhood Chain?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. It targets Robinhood Chain mainnet, chain ID 4663, and the live Pons v2 factory at 0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between a Pons sniper and a Pons bundler?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The sniper detects other people's launches and optionally buys from one configured wallet. The bundler launches your own token with launchAndBuy and buys from up to 32 snipe-tax exemption wallets you control. This CLI includes both."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a public Pons sniper pay the opening snipe tax?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, unless the creator listed your wallet as a snipe-tax exemption at launch. Pons v2 charges a decaying buy tax that starts near 99% in the first seconds. This bot reads currentSnipeTaxBps(recipient) and, by default, waits until that tax is zero."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I dry-run the Pons sniper bot?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Dry-run is the default. npm run pons -- sniper run --dry-run detects, quotes, and risk-checks without signing or broadcasting. Live buys require SNIPER_DRY_RUN=false and sniper run --live."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is this Pons v1 or Pons v2?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pons v2 only. Tokens trade on a bonding curve and graduate into a locked Uniswap v4 pool. The v1 Uniswap v3 factory is out of scope."
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="wrap nav">
+      <a class="brand" href="#top">Pons Sniper Bot</a>
+      <nav aria-label="Primary">
+        <a href="#how">How it works</a>
+        <a href="#cli">CLI</a>
+        <a href="./bundler.html">Bundler</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-sm" href="https://github.com/wooyang/pons-bundler">Get the CLI</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="wrap hero" id="top">
+        <p class="kicker">Robinhood Chain · chain ID 4663 · pons.family v2</p>
+        <h1>Pons sniper bot for Robinhood Chain</h1>
+        <p class="lede">
+          Detect <a href="https://www.ponsfamily.com">pons.family</a> v2 launches from the live factory
+          <code>TokenLaunched</code> event, filter them, quote the bonding curve, and buy only when your
+          risk rules allow it. Dry-run is the default.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#cli">Run the Pons sniper CLI</a>
+          <a class="btn btn-ghost" href="./bundler.html">Launch with the Pons bundler</a>
+        </div>
+        <ul class="facts">
+          <li><strong>Pons v2</strong> factory events, not a generic AMM sniper</li>
+          <li><strong>Official quotes</strong> fees + <code>currentSnipeTaxBps</code></li>
+          <li><strong>Dry-run first</strong> no broadcast until you opt in</li>
+        </ul>
+      </section>
+
+      <section class="wrap" id="how">
+        <h2>How the Pons sniper bot works</h2>
+        <p>
+          Search traffic often looks for a “Pons sniper,” “Robinhood Chain sniper,” or “pons.family bot.”
+          This CLI is none of those as a black box: it only talks to the documented Pons v2 contracts on
+          Robinhood Chain.
+        </p>
+        <ol class="steps">
+          <li>
+            <h3>Detect TokenLaunched</h3>
+            <p>
+              Subscribe to (or poll) the Pons v2 factory. Each launch has a token, a curve, a deployer,
+              and a quote asset. Duplicate detections collapse to
+              <code>chainId:factory:token</code>.
+            </p>
+          </li>
+          <li>
+            <h3>Filter, then quote</h3>
+            <p>
+              Creator lists, symbol rules, native-quote-only, liquidity bounds, and max creator tax are
+              all configurable. Quotes use the same integer curve math as
+              <a href="https://docs.ponsfamily.com/v2">docs.ponsfamily.com/v2</a>.
+            </p>
+          </li>
+          <li>
+            <h3>Risk check, then buy</h3>
+            <p>
+              Gas reserve, position caps, slippage <code>minTokensOut</code>, and one position per token
+              run before any live <code>curve.buy()</code>. After fill, the bot reconciles
+              <code>balanceOf</code>, not the quoted size.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="wrap split" id="tax">
+        <div>
+          <h2>Pons v2 snipe tax on Robinhood Chain</h2>
+          <p>
+            Early buys on a new Pons curve pay a decaying opening tax that starts near 99% and falls
+            away within seconds. Only the creator, fee recipient, and wallets named at launch as
+            <code>snipeTaxExemptions</code> skip it. A public sniper wallet is not exempt.
+          </p>
+          <ul class="checks">
+            <li>Read <code>currentSnipeTaxBps(recipient)</code> before quoting</li>
+            <li>Default <code>SNIPER_MAX_SNIPE_TAX_BPS=0</code> waits until the tax is gone</li>
+            <li>Robinhood Chain is FCFS — this bot does not bid priority fees</li>
+            <li>Curve trades only while factory phase is 0</li>
+          </ul>
+        </div>
+        <aside class="card" aria-label="Honest limits">
+          <h3>What this is not</h3>
+          <p>
+            Not a wash-trading or volume bot. Not copy trading. Not Pons v1. Not a guaranteed first
+            fill. Live execution is opt-in and limited to the wallet you configure.
+          </p>
+        </aside>
+      </section>
+
+      <section class="wrap" id="cli">
+        <h2>Run the Pons sniper CLI</h2>
+        <p>
+          Node 20+, TypeScript, viem. Keys stay in <code>.env</code>. Prefer a paid Robinhood Chain RPC;
+          the public endpoint is rate-limited.
+        </p>
+        <pre><code>npm install
+cp .env.example .env
+npm run pons -- sniper test
+npm run pons -- sniper run --dry-run</code></pre>
+        <p class="fine">
+          Live mode is explicit: set <code>SNIPER_DRY_RUN=false</code> and run
+          <code>npm run pons -- sniper run --live</code>. Status, config, and reconcile commands never
+          need to broadcast.
+        </p>
+      </section>
+
+      <section class="wrap" id="contracts">
+        <h2>Pons v2 contracts on Robinhood Chain</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Factory (TokenLaunched)</td>
+              <td>
+                <a href="https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e"
+                  >0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Launch and buy</td>
+              <td>
+                <a href="https://robinhoodchain.blockscout.com/address/0xe33E9E479dF8802cb0866d5d05258bEc4cF62948"
+                  >0xe33E9E479dF8802cb0866d5d05258bEc4cF62948</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fine">
+          Official protocol docs:
+          <a href="https://docs.ponsfamily.com/v2">docs.ponsfamily.com/v2</a>. Launching your own token
+          with extra wallets is documented on the
+          <a href="./bundler.html">Pons bundler page</a>.
+        </p>
+      </section>
+
+      <section class="wrap" id="faq">
+        <h2>Pons sniper bot FAQ</h2>
+        <details open>
+          <summary>What is a Pons sniper bot?</summary>
+          <p>
+            A tool that watches Pons v2 launches on Robinhood Chain and can buy the bonding curve under
+            rules you set. This one is open-source TypeScript and uses the live factory event, not a
+            private indexer.
+          </p>
+        </details>
+        <details>
+          <summary>Does this Pons sniper work on Robinhood Chain?</summary>
+          <p>Yes. Mainnet chain ID 4663, live Pons v2 factory and launch-and-buy router.</p>
+        </details>
+        <details>
+          <summary>Pons sniper vs Pons bundler — which do I want?</summary>
+          <p>
+            Use the sniper to evaluate other launches. Use the bundler when you are the creator and want
+            <code>launchAndBuy</code> plus exempt-wallet curve buys. Both ship in this CLI.
+          </p>
+        </details>
+        <details>
+          <summary>Does a public sniper pay the Pons snipe tax?</summary>
+          <p>
+            Yes. Exemptions are fixed at creation. The bot reads <code>currentSnipeTaxBps</code> and by
+            default skips until the opening tax has decayed to zero.
+          </p>
+        </details>
+        <details>
+          <summary>Can I dry-run without sending a transaction?</summary>
+          <p>
+            Yes. <code>sniper run --dry-run</code> is the default path: detect, quote, risk-check,
+            simulate. No sign, no broadcast.
+          </p>
+        </details>
+        <details>
+          <summary>Is this Pons v1 or Pons v2?</summary>
+          <p>
+            V2 only. Bonding curve, then a locked Uniswap v4 pool. The v1 Uniswap v3 factory is out of
+            scope.
+          </p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="wrap foot">
+      <nav aria-label="Footer">
+        <a href="./bundler.html">Pons bundler</a>
+        <a href="https://github.com/wooyang/pons-bundler">Source</a>
+        <a href="https://docs.ponsfamily.com/v2">Pons v2 docs</a>
+      </nav>
+      <p>
+        Unofficial open-source CLI. Not affiliated with Robinhood or pons.family. Tokens can go to
+        zero. Read <code>canLaunch</code> before you spend gas on a launch. Pons v2 is still described
+        as under audit.
+      </p>
+    </footer>
+  </body>
+</html>

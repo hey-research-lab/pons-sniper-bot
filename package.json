@@ -1,0 +1,54 @@
+{
+  "name": "pons-sniper-bot",
+  "version": "1.0.0",
+  "description": "Pons sniper bot for Robinhood Chain. Detect pons.family v2 TokenLaunched events and buy the bonding curve with dry-run, slippage, and risk limits. Includes the Pons v2 launch bundler.",
+  "type": "module",
+  "bin": {
+    "pons": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/cli.ts",
+    "pons": "tsx src/cli.ts",
+    "test": "tsx --test src/quote.test.ts src/sniper/sniper.test.ts",
+    "typecheck": "tsc --noEmit",
+    "site": "npx --yes serve docs -p 4173"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "pons",
+    "pons sniper bot",
+    "pons-sniper",
+    "pons sniper",
+    "pons-bundler",
+    "pons bundler",
+    "pons-v2",
+    "pons.family",
+    "robinhood-chain",
+    "robinhood chain",
+    "robinhood chain sniper",
+    "launchpad",
+    "bonding-curve",
+    "token launched",
+    "typescript",
+    "viem",
+    "evm"
+  ],
+  "homepage": "https://wooyang.github.io/pons-bundler/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wooyang/pons-bundler.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "viem": "^2.37.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}

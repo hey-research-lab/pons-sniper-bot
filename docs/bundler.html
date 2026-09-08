@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pons Bundler for Robinhood Chain | Launch Pons v2 Tokens</title>
+    <meta
+      name="description"
+      content="Launch Pons v2 tokens on Robinhood Chain with launchAndBuy and parallel multi-wallet curve buys. Open-source TypeScript bundler for pons.family."
+    />
+    <meta
+      name="keywords"
+      content="pons bundler, pons bundler bot, robinhood chain, pons.family, pons v2, token launch, launchpad, multi wallet, bonding curve"
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0c100d" />
+    <link rel="canonical" href="https://wooyang.github.io/pons-bundler/bundler.html" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wooyang.github.io/pons-bundler/bundler.html" />
+    <meta property="og:title" content="Pons Bundler for Robinhood Chain" />
+    <meta
+      property="og:description"
+      content="Launch pons.family v2 tokens with launchAndBuy and parallel exempt-wallet curve buys on Robinhood Chain."
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://wooyang.github.io/pons-bundler/favicon.svg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Pons Bundler for Robinhood Chain" />
+    <meta
+      name="twitter:description"
+      content="Open-source TypeScript Pons v2 bundler: launchAndBuy plus multi-wallet curve buys."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Pons Bundler",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Windows, macOS, Linux",
+        "url": "https://wooyang.github.io/pons-bundler/bundler.html",
+        "codeRepository": "https://github.com/wooyang/pons-bundler",
+        "description": "TypeScript CLI to launch Pons v2 tokens on Robinhood Chain with launchAndBuy and parallel multi-wallet bonding-curve buys.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Pons v2 launchAndBuy on Robinhood Chain",
+          "Up to 32 snipe-tax exemption wallets",
+          "Parallel bonding-curve buys",
+          "Native ETH and USDG quote assets"
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a Pons bundler?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A Pons bundler launches a token on the pons.family launchpad and buys from wallets you control in the opening window, so public snipers do not take the first fills."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this Pons bundler work on Robinhood Chain?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. It targets Robinhood Chain mainnet, chain ID 4663, and the live Pons v2 factory and launch-and-buy router."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is this Pons v1 or Pons v2?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pons v2 only. Tokens launch on a bonding curve and graduate into a locked Uniswap v4 pool. The v1 Uniswap v3 factory is out of scope."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many wallets can I bundle on Pons?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Up to 32 extra wallets as snipe-tax exemptions, plus the master launchAndBuy recipient."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is a Pons bundle one atomic transaction?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Robinhood Chain has no atomic multi-signer transaction. Create plus the first buy is one transaction. Extra wallets send separate buys in the same launch window and skip the opening snipe tax because they are exempt."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the Pons v2 snipe tax?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Buys in the first about five seconds pay a decaying tax that starts near 99%. The launching wallet, fee recipient, and listed exemption wallets skip that tax."
+            }
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="wrap nav">
+      <a class="brand" href="./">Pons Bundler</a>
+      <nav aria-label="Primary">
+        <a href="./">Sniper</a>
+        <a href="#how">How it works</a>
+        <a href="#cli">CLI</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-sm" href="https://github.com/wooyang/pons-bundler">Get the CLI</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="wrap hero" id="top">
+        <p class="kicker">Robinhood Chain · chain ID 4663</p>
+        <h1>Pons bundler for Robinhood Chain</h1>
+        <p class="lede">
+          Launch a <a href="https://www.ponsfamily.com">pons.family</a> v2 token with
+          <code>launchAndBuy</code>, exempt up to 32 wallets from the opening snipe tax, then buy the
+          bonding curve in parallel.
+        </p>
+        <div class="cta">
+          <a class="btn" href="#cli">Run the TypeScript CLI</a>
+          <a class="btn btn-ghost" href="./">Pons sniper bot</a>
+        </div>
+        <ul class="facts">
+          <li><strong>Pons v2</strong> bonding curve → Uniswap v4</li>
+          <li><strong>32 wallets</strong> snipe-tax exemptions</li>
+          <li><strong>Open source</strong> viem + Node 20</li>
+        </ul>
+      </section>
+
+      <section class="wrap" id="how">
+        <h2>How the Pons bundler works</h2>
+        <p>
+          Search results often call this a “Pons bundler bot.” On Robinhood Chain the sequencer is
+          first-come, first-served. There is no Flashbots-style atomic bundle of many signers. This CLI
+          does the flow Pons v2 actually allows.
+        </p>
+        <ol class="steps">
+          <li>
+            <h3>Create + first buy</h3>
+            <p>
+              One <code>launchAndBuy</code> transaction deploys the token and curve and seeds the first
+              fill. Nothing can trade between those two steps.
+            </p>
+          </li>
+          <li>
+            <h3>Exempt your wallets</h3>
+            <p>
+              Pass up to 32 addresses as <code>snipeTaxExemptions</code>. They skip the decaying ~99%
+              opening tax. The list is fixed at creation.
+            </p>
+          </li>
+          <li>
+            <h3>Parallel curve buys</h3>
+            <p>
+              Those wallets pre-sign <code>buy()</code> and submit together. They are separate
+              transactions aimed at the same launch window, not one mega-tx.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="wrap split">
+        <div>
+          <h2>Launch a token on Pons with multiple wallets</h2>
+          <p>
+            Use this if you want to launch a token on Pons, run a multi-wallet Pons bundler, or keep
+            snipers off the first fills on Robinhood Chain.
+          </p>
+          <ul class="checks">
+            <li>Pons v2 factory <code>0x7eD5…C7e</code></li>
+            <li>Launch-and-buy router <code>0xe33E…948</code></li>
+            <li>Default quote: native ETH (USDG also approved)</li>
+            <li>Dry-run simulates before you broadcast</li>
+          </ul>
+        </div>
+        <aside class="card" aria-label="Honest limits">
+          <h3>What this is not</h3>
+          <p>
+            Not an ERC-4337 UserOp bundler. Not Pons v1 (Uniswap v3). Not a guaranteed same-block atomic
+            multi-wallet transaction — that is not a Robinhood Chain feature.
+          </p>
+        </aside>
+      </section>
+
+      <section class="wrap" id="cli">
+        <h2>Launch with the CLI</h2>
+        <p>
+          Local TypeScript CLI. Keys stay in <code>.env</code> and a gitignored
+          <code>wallets.json</code>. Prefer a paid Robinhood Chain RPC.
+        </p>
+        <pre><code>npm install
+cp .env.example .env
+npm run pons -- status
+
+npm run pons -- wallets generate --count 8 --out wallets.json
+npm run pons -- wallets fund --file wallets.json --each 0.02
+
+npm run pons -- launch \
+  --name "Example" \
+  --symbol EXMPL \
+  --master-buy 0.1 \
+  --file wallets.json \
+  --each-buy 0.02 \
+  --dry-run</code></pre>
+        <p class="fine">
+          Drop <code>--dry-run</code> to broadcast. Then <code>buy</code>, <code>sell</code>, and
+          <code>wallets sweep</code> as needed.
+        </p>
+      </section>
+
+      <section class="wrap" id="contracts">
+        <h2>Pons v2 contracts on Robinhood Chain</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Factory</td>
+              <td>
+                <a href="https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e"
+                  >0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>Launch and buy</td>
+              <td>
+                <a href="https://robinhoodchain.blockscout.com/address/0xe33E9E479dF8802cb0866d5d05258bEc4cF62948"
+                  >0xe33E9E479dF8802cb0866d5d05258bEc4cF62948</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="fine">
+          Public launching is gated. The CLI reads <code>canLaunch</code> before you spend gas. Official
+          docs: <a href="https://docs.ponsfamily.com/v2">docs.ponsfamily.com/v2</a>.
+        </p>
+      </section>
+
+      <section class="wrap" id="faq">
+        <h2>Pons bundler FAQ</h2>
+        <details open>
+          <summary>What is a Pons bundler?</summary>
+          <p>
+            A tool that launches a token on the Pons launchpad and buys from wallets you control in the
+            opening window, so public snipers do not take the first fills.
+          </p>
+        </details>
+        <details>
+          <summary>Does this Pons bundler work on Robinhood Chain?</summary>
+          <p>Yes. Mainnet chain ID 4663, live Pons v2 factory and launch-and-buy router.</p>
+        </details>
+        <details>
+          <summary>Is this Pons v1 or Pons v2?</summary>
+          <p>
+            V2 only. Bonding curve, then a locked Uniswap v4 pool. The v1 Uniswap v3 factory is out of
+            scope.
+          </p>
+        </details>
+        <details>
+          <summary>How many wallets can I bundle on Pons?</summary>
+          <p>Up to 32 extra exemption wallets, plus the master <code>launchAndBuy</code> recipient.</p>
+        </details>
+        <details>
+          <summary>Is a Pons bundle one atomic transaction?</summary>
+          <p>
+            No. Create plus the first buy is one transaction. Extra wallets send separate buys.
+            Exemptions are what let them trade in the first seconds without the 99% snipe tax.
+          </p>
+        </details>
+        <details>
+          <summary>What is the Pons v2 snipe tax?</summary>
+          <p>
+            Buys in roughly the first five seconds pay a decaying tax that starts near 99%. The
+            launcher, fee recipient, and listed exemption wallets skip it.
+          </p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="wrap foot">
+      <nav aria-label="Footer">
+        <a href="./">Pons sniper bot</a>
+        <a href="https://github.com/wooyang/pons-bundler">Source</a>
+        <a href="https://docs.ponsfamily.com/v2">Pons v2 docs</a>
+      </nav>
+      <p>
+        Unofficial open-source CLI. Not affiliated with Robinhood or pons.family. Tokens can go to
+        zero. Pons v2 is still described as under audit — read <code>canLaunch</code> every run.
+      </p>
+    </footer>
+  </body>
+</html>

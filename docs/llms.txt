@@ -1,0 +1,11 @@
+# Pons Sniper Bot
+
+Open-source TypeScript CLI for pons.family v2 on Robinhood Chain (chain ID 4663).
+
+- Sniper: detect TokenLaunched, filter, quote, risk-check, optional curve buy. Dry-run by default.
+- Bundler: launchAndBuy plus up to 32 snipe-tax exemption wallets.
+
+Site: https://wooyang.github.io/pons-bundler/
+Bundler: https://wooyang.github.io/pons-bundler/bundler.html
+Docs: https://docs.ponsfamily.com/v2
+Source: https://github.com/wooyang/pons-bundler
