@@ -1,6 +1,6 @@
 # Pons Sniper Bot for Robinhood Chain
 
-Open-source **Pons sniper bot** and **Pons bundler** for [pons.family](https://www.ponsfamily.com) **v2** on **Robinhood Chain** (chain ID `4663`). Detect `TokenLaunched` events, filter launches, quote the bonding curve with official math, and buy with dry-run, slippage, and risk limits — or launch your own token with `launchAndBuy`.
+Open-source **Pons sniper bot** and **Pons bundler** for [pons.family](https://www.ponsfamily.com) **v2** on **Robinhood Chain** (chain ID `4663`). Detect `TokenLaunched` events, filter launches, quote the bonding curve with official math, and buy with dry-run, slippage, and risk limits - or launch your own token with `launchAndBuy`.
 
 This is Pons-specific. It is not a generic DEX sniper, not an ERC-4337 UserOp bundler, and not a volume or wash-trading tool.
 
